@@ -27,7 +27,7 @@ double battery = 0.0;
 
 //CAN to Nextion Methods
 int rpm2ProgBar(int rpm){
-	return ((rpm+1000)/100);
+	return ((rpm+500)/100);
 }
 
 //ISR Method
