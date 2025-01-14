@@ -85,7 +85,7 @@ void thousand(unsigned char buf[8]){
 	
 	//Printing Data to Nextion
 	sendToNextion("tacho.val="+String(rpm2ProgBar(rpm)));
-	//Add TPS Method
+	sendToNextion("tps.val="+String(tps));
 }
 
 //0x00001001 processing method. Calculate speed in kmph and AFR.
