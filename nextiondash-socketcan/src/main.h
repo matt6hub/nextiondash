@@ -2,15 +2,20 @@
 #define MAIN_H
 
 //Dependencies
+#include <linux/can.h>
+#include <linux/can/raw.h>
+#include <sys/socket.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <fnctl.h>
+#include <libserialport.h>
+#include <fcntl.h>
 #include <errno.h>
-#include <socketcan.h> //For SocketCAN
-#include <wiringSerial.h> //For NEXTION
+
 
 //Interface Definitions
 #define IF_CANBUS "vcan0" //interface name for socketcan testing interface
