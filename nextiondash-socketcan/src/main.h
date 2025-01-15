@@ -43,4 +43,6 @@ int thousand(unsigned char buf[8],  struct sp_port *serial);
 int thousand1(unsigned char buf[8],  struct sp_port *serial);
 int thousand3(unsigned char buf[8],  struct sp_port *serial);
 
+#ENDIF MAIN_H
+
 
