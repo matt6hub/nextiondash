@@ -1,7 +1,7 @@
 # Compiler and flags
 CC = gcc
 CFLAGS = -Wall
-LDFLAGS = -lwiringSerial -lsocketcan
+LDFLAGS = -lserialport -lsocketcan
 
 # Directory paths
 SRC_DIR = src
