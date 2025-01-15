@@ -33,7 +33,7 @@ unsigned int rpm, tps, gear;
 double spd, afr, iat, clt, battery;
 
 // Function to send commands to the Nextion display
-int next_cmd(int serial_fd, const char *cmd);
+int next_cmd(struct sp_port *serial, const char *cmd);
 
 // SocketCAN initialization function
 int socketcan_init(const char *iface);
