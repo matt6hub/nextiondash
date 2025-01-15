@@ -16,6 +16,7 @@
 #define IF_NEXTION "/dev/ttyS0" //interface name for nextion testing interface
 
 //Other Variable Definitions
+double spdconstant = (2.25 / 256) * 1.609344;
 
 //CAN Related Variables
 unsigned char flagRecv, len = 0;
@@ -48,8 +49,46 @@ int socketcan_init(const char *iface){
     /*
         This code first creates an ifreq struct named ifr to handle network interface requests including manipulation of the interface properties.
         strncpy is used to set the ifr_name property of ifr from iface, while making sure that it will not overflow the buffer. 
+        Finally, ioctl is used to get the index of the network name, s for socket opened earlier,  (SIOCGIFINDEX) interface index, all stored in ifr. 
     */
+
     struct ifreq ifr;
     strncpy(ifr.ifr_name, iface, sizeof(ifr.ifr_name)-1);
     ioctl(s, SIOCGIFINDEX, &ifr);
+
+    struct sockaddr_can addr;
+    memset(&addr, 0, sizeof(addr));
+    addr.can_family = AF_CAN;
+    addr.can_ifindex = ifr.ifr_index;
+
+    if(bind(s, (struct sockaddr * )&addr, sizeof(addr)) < 0){
+        perror("ERROR: Socket Bindings Failure");
+        close(s);
+        exit(1);
+    }
+
+    return s;
+}
+
+//CAN Data Processing
+int thousand(unsigned char buf[8], int serial_fd){
+    rpm = (buf[0] << 8) | buf[1];
+    tps = buf[6];
+
+    char rpm_cmd[50];
+    char tps_cmd[50];
+
+    unsigned int rpm_proc = ((rpm+500)/100);
+    snprintf(rpm_cmd, sizeof(rpm_cmd), "tacho.val=%d", rpm_proc);
+    next_cmd(serial_fd, rpm_cmd);
+
+    snprintf(tps_cmd, sizeof(tps_cmd), "tps.val=%d", tps);
+    next_cmd(serial_fd, tps_cmd);
+}
+
+int thousand1(unsigned char buf[8], int serial_fd){
+    double spdraw = (buf[2] << 8) | buf[3];
+    spd = spdraw * spdconstant;
+
+    afr = ((buf[6] << 8) | buf[7]) / 10;
 }
