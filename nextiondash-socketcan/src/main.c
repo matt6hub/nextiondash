@@ -1,22 +1,7 @@
 //Install socketcan library with sudo apt-get install libsocketcan
 
 //Dependencies
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <fnctl.h>
-#include <errno.h>
-#include <socketcan.h> //For SocketCAN
-#include <wiringSerial.h> //For NEXTION
-
-//Interface Definitions
-#define IF_CANBUS "vcan0" //interface name for socketcan testing interface
-#define IF_NEXTION "/dev/ttyS0" //interface name for nextion testing interface
-
-//Other Variable Definitions
-double spdconstant = (2.25 / 256) * 1.609344;
+#include "main.h"
 
 //CAN Related Variables
 unsigned char flagRecv, len = 0;
@@ -92,7 +77,7 @@ int thousand(unsigned char buf[8], int serial_fd){
 
 int thousand1(unsigned char buf[8], int serial_fd){
     double spdraw = (buf[2] << 8) | buf[3];
-    spd = spdraw * spdconstant;
+    spd = spdraw * SPD_CONSTANT;
 
     afr = ((buf[6] << 8) | buf[7]) / 10;
 
