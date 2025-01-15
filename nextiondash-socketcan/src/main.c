@@ -84,6 +84,10 @@ int thousand(unsigned char buf[8], int serial_fd){
 
     snprintf(tps_cmd, sizeof(tps_cmd), "tps.val=%d", tps);
     next_cmd(serial_fd, tps_cmd);
+
+    printf("RPM: %d, TPS: %d\n", rpm, tps); //Print data to serial console
+
+    return 0;
 }
 
 int thousand1(unsigned char buf[8], int serial_fd){
@@ -91,4 +95,89 @@ int thousand1(unsigned char buf[8], int serial_fd){
     spd = spdraw * spdconstant;
 
     afr = ((buf[6] << 8) | buf[7]) / 10;
+
+    char spd_cmd[50];
+    char afr_cmd[50];
+
+    snprintf(spd_cmd, sizeof(spd_cmd), "speedo.val=%d", spd);
+    next_cmd(serial_fd, spd_cmd);
+
+    //Implement AFR Command on Nextion Dash
+
+    printf("Speed: %.2f km/h, AFR: %.1f\n", spd, afr); //Print data to serial console
+
+    return 0;
+}
+
+int thousand3(unsigned char buf[8], int serial_fd){
+    iat = buf[0] - 40;
+    clt = buf[1] - 40;
+    gear = buf[5];
+    battery = buf[7] / 11;
+
+    char iat_cmd[50];
+    char clt_cmd[50];
+    char gear_cmd[50];
+    char battery_cmd[50];
+
+    //Implement commands
+
+    printf("IAT: %.1f, CLT: %.1f, Gear: %d, Battery: %.2f\n", iat, clt, gear, battery); //Print data to serial console
+
+    return 0;
+}
+
+int main(){
+
+    //Initialize SocketCAN
+    int can_s = socketcan_init(IF_CANBUS);
+
+    //Initialize Serial Port
+    int serial_fd = serialOpen(IF_NEXTION, 115200);
+    if(serial_fd == -1){
+        perror("ERROR: Serial Port Open Failure");
+        close(can_s);
+        exit(1);
+    }
+
+    printf("NEXTION CANBUS ENABLED DASH INIT\n");
+
+    while(true){
+        struct can_frame frame;
+        int nbytes = read(can_socket, &frame, sizeof(struct can_frame)); //Number of Bytes read from CANBUS
+
+        if(nbytes < 0){
+            perror("ERROR: CANBUS READ ERROR");
+            break;
+        }
+
+        if(nbytes < sizeof(struct can_frame)){
+            fprintf(stderr, "ERROR: CAN FRAME INCOMPLETE");
+            continue;
+        }
+
+        //Process CAN Frame on ID Basis
+        unsigned long canID = frame.can_id;
+        switch(canID){
+            
+            case 0x00001000:
+                thousand(frame.data, serial_fd);
+            break;
+
+            case 0x00001001:
+                thousand1(frame.data, serial_fd);
+            break;
+
+            case 0x00001003:
+                thousand3(frame.data, serial_fd);
+            break;
+
+            default:
+                printf("UNHANDLED CANID: 0x%1X\n", canID);
+            break;
+        }
+    }
+    close(can_s);
+    serialClose(serial_fd);
+    return 0;
 }
