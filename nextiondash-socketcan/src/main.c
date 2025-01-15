@@ -12,9 +12,9 @@ unsigned int rpm, tps, gear = 0;
 double spd, afr, iat, clt, battery = 0.0;
 
 //Method to send command to Nextion
-int next_cmd(int serial_fd, const char *cmd){
-    write(serial_fd, cmd, strlen(cmd)); //Send the command string
-    write(serial_fd, "\xFF\xFF\xFF", 3); //Send the command terminator
+int next_cmd(struct sp_port *serial, const char *cmd) {
+    sp_blocking_write(serial, cmd, strlen(cmd), 1000); // Send the command string
+    sp_blocking_write(serial, "\xFF\xFF\xFF", 3, 1000); // Send the command terminator
     return 0;
 }
 
