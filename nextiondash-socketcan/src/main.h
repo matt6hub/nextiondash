@@ -39,8 +39,8 @@ int next_cmd(int serial_fd, const char *cmd);
 int socketcan_init(const char *iface);
 
 // CAN Data Processing functions
-int thousand(unsigned char buf[8], int serial_fd);
-int thousand1(unsigned char buf[8], int serial_fd);
-int thousand3(unsigned char buf[8], int serial_fd);
+int thousand(unsigned char buf[8],  struct sp_port *serial);
+int thousand1(unsigned char buf[8],  struct sp_port *serial);
+int thousand3(unsigned char buf[8],  struct sp_port *serial);
 
 
