@@ -123,7 +123,7 @@ int main(){
         exit(1);
     }
 
-    sp_set_baudrate(serial, 115200);
+    sp_set_baudrate(serial, 9600);
     sp_set_flowcontrol(serial, SP_FLOWCONTROL_NONE);
 
     printf("NEXTION CANBUS ENABLED DASH INIT\n");
