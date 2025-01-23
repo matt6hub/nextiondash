@@ -19,7 +19,7 @@
 //MEMS19 Commands
 unsigned char ecuSpecificInitCommand = 0x7C;
 unsigned char ecuWokeResponse[3] = {0x55, 0x76, 0x83};
-unsigned char ecuSpecificInitResponse[4] = {0x55, 0x76, 0x83, 0xE9};
+unsigned char ecuSpecificInitResponse[2] = {0x55, 0xE9};
 
 bool ecuConnected = false;
 

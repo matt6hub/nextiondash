@@ -87,6 +87,9 @@ int thousand1(unsigned char buf[8], struct sp_port *serial) {
     snprintf(spd_cmd, sizeof(spd_cmd), "speedo.val=%d", (int)spd);
     next_cmd(serial, spd_cmd);
 
+    //snprintf(afr_cmd, sizeof(afr_cmd), "", afr*100);
+    //next_cmd(serial, afr_cmd);
+
     printf("Speed: %.2f km/h, AFR: %.1f\n", spd, afr); // Print data to serial console
 
     return 0;
@@ -97,6 +100,27 @@ int thousand3(unsigned char buf[8], struct sp_port *serial) {
     clt = buf[1] - 40;
     gear = buf[5];
     battery = buf[7] / 11.0;
+
+    char iat_cmd[50];
+    char clt_cmd[50];
+    char bat_cmd[50];
+
+    snprintf(iat_cmd, sizeof(iat_cmd), "iat_gauge.val=%d", (int)iat);
+    next_cmd(serial, iat_cmd);
+
+    snprintf(iat_cmd, sizeof(iat_cmd), "iat_actual.txt=\"IAT: %d C\"", (int)iat);
+    next_cmd(serial, iat_cmd);
+    
+    //Starting by initializing CLT.
+    int clt_gauge = 0;
+    while((clt >= 60) && (clt <= 160)){
+        clt_gauge = (int)(clt - 60);
+    }
+    snprintf(clt_cmd, sizeof(clt_cmd), "clt_gauge.val=%d", (int)clt_gauge);
+    next_cmd(serial, clt_cmd);
+
+    snprintf(clt_cmd, sizeof(clt_cmd), "clt_actual.txt=\"CLT: %d C\"", (int)clt);
+    next_cmd(serial, clt_cmd);
 
     printf("IAT: %.1f, CLT: %.1f, Gear: %d, Battery: %.2f\n", iat, clt, gear, battery);
 
